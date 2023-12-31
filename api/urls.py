@@ -1,12 +1,12 @@
-from django.urls import re_path
+from django.urls import path
 from django.views.decorators.csrf import csrf_exempt
-
-from api.views import *
+from rest_framework.urlpatterns import format_suffix_patterns
+from api import views
 
 
 urlpatterns = [
-
-	re_path("product/((?P<pk>\d+)/)?", csrf_exempt(ProductView.as_view())),
-	re_path("order/((?P<pk>\d+)/)?", csrf_exempt(OrderView.as_view())),
-
+    path("order/", views.OrderList.as_view()),
+    path("order/<int:pk>/", views.OrderDetail.as_view()),
 ]
+
+urlpatterns = format_suffix_patterns(urlpatterns)
