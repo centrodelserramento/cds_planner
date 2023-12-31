@@ -62,3 +62,26 @@ class Order(models.Model):
     RgInvoiced = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgNotes = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
+
+
+class Posa(models.Model):
+    order = models.OneToOneField(
+        "Order", null=False, primary_key=True, on_delete=models.CASCADE
+    )
+    descrizione = models.CharField(max_length=100, null=True)
+    tipo = models.ForeignKey("TipoPosa", null=True)
+
+
+class TipoPosa(models.Model):
+    descrizione = models.CharField(max_length=20)
+
+
+@receiver(post_save, sender=Order)
+def create_posa(sender, instance, created, **kwargs):
+    if created:
+        Posa.objects.create(order=instance)
+
+
+@receiver(post_save, sender=Order)
+def save_posa(sender, instance, **kwargs):
+    instance.posa.save()
