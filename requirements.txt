@@ -2,7 +2,7 @@
 django==4.1.12
 python-dotenv==1.0.0
 
-# UI 
+# UI
 django-admin-datta==1.0.10
 
 # Tooling
@@ -17,3 +17,5 @@ gunicorn==21.2.0
 # DB Layer
 # psycopg2-binary
 # mysqlclient
+
+shortuuid
