@@ -7,7 +7,6 @@ from django.dispatch import receiver
 class Order(models.Model):
     id = ShortUUIDField(
         length=8,
-        prefix="id_",
         alphabet="abcdefghijkmnpqrstuvwxyz23456789",
         primary_key=True,
     )
@@ -69,7 +68,7 @@ class Posa(models.Model):
         "Order", null=False, primary_key=True, on_delete=models.CASCADE
     )
     descrizione = models.CharField(max_length=100, null=True)
-    tipo = models.ForeignKey("TipoPosa", null=True)
+    tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
 
 
 class TipoPosa(models.Model):
