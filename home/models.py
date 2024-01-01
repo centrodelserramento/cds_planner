@@ -80,6 +80,10 @@ class Posa(TrackModifyDate):
         "Order", null=False, primary_key=True, on_delete=models.CASCADE
     )
     descrizione = models.TextField(max_length=500, null=True)
+    data = models.DateField(null=True, blank=True)
+    ora = models.TimeField(null=True, blank=True, help_text="Ora di inizio posa, esempio 14:30")
+    durata_ore = models.PositiveSmallIntegerField(null=True, blank=True)
+    durata_minuti = models.PositiveSmallIntegerField(null=True, default=0)
     tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
     stato = models.ForeignKey("StatoPosa", null=True, on_delete=models.PROTECT)
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)

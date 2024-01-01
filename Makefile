@@ -6,3 +6,6 @@ migrate:
 
 run:
 	python manage.py runserver
+
+collectstatic:
+	python manage.py collectstatic

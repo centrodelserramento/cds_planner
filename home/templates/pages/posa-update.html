@@ -2,6 +2,9 @@
 {% load static %}
 {% load bootstrap4 %}
 
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap-datetimepicker.css">
+{% endblock extrastyle %}
 
 {% block breadcrumbs %}{% endblock breadcrumbs %}
 
@@ -18,26 +21,39 @@
                 <div class="card-block">
                     <div class="row">
                         <div class="col-md-12">
+                            <p>Ragione sociale: <b>{{ posa.order.CompanyName }}</b></p>
+                            <p>Indirizzo: {{ posa.order.Address }} {{ posa.order.ZIPCode }} {{ posa.order.City }}
+                                {{posa.order.County }}</p>
+                            <p>Riferimento ordine:
+                                <code>{{ posa.order.InternalOrdNo }}</code>
+                            </p>
+                            {% if user.is_authenticated %}
+
                             <form action="" method="post">
                                 {% csrf_token %}
-                                <p>Ragione sociale: <b>{{ posa.order.CompanyName }}</b></p>
-                                <p>Indirizzo: {{ posa.order.Address }} {{ posa.order.ZIPCode }} {{ posa.order.City }}
-                                    {{posa.order.County }}</p>
-                                <p>Riferimento ordine:
-                                    <code>{{ posa.order.InternalOrdNo }}</code>
-                                </p>
+
                                 {{ form.non_field_errors }}
+                                {% bootstrap_field form.data %}
+                                {% bootstrap_field form.ora %}
+                                {% bootstrap_field form.durata_ore %}
+                                {% bootstrap_field form.durata_minuti %}
                                 {% bootstrap_field form.tipo %}
                                 {% bootstrap_field form.descrizione %}
                                 {% bootstrap_field form.telefono1 %}
                                 {% bootstrap_field form.telefono2 %}
                                 {% buttons %}
+                                <input type="text" name="testpicker" class="datetimepicker" />
                                 <button type="submit" class="btn btn-primary">
                                     Conferma modifiche
                                 </button>
                                 {% endbuttons %}
                             </form>
+                            {% else %}
+                            <p>Descrizione: {{ form.descrizione.value|default_if_none:"" }}</p>
+                            <p>Telefono cliente 1: {{ form.telefono1.value|default_if_none:"" }}</p>
+                            <p>Telefono cliente 2: {{ form.telefono2.value|default_if_none:"" }}</p>
 
+                            {% endif %}
                         </div>
                     </div>
                 </div>
@@ -46,3 +62,34 @@
     </div>
 </div>
 {% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+<script src="/static/assets/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+    jQuery(document).ready(function ($) {
+        if (window.jQuery().datetimepicker) {
+            $('#id_data').datetimepicker({
+                // Formats
+                // follow MomentJS docs: https://momentjs.com/docs/#/displaying/format/
+                format: 'DD-MM-YYYY',
+
+                // Your Icons
+                // as Bootstrap 4 is not using Glyphicons anymore
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

@@ -19,3 +19,5 @@ gunicorn==21.2.0
 # mysqlclient
 
 shortuuid
+django-phonenumber-field[phonenumbers]
+django-colorfield
