@@ -2,9 +2,19 @@ from django.db import models
 from shortuuid.django_fields import ShortUUIDField
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+from phonenumber_field.modelfields import PhoneNumberField
+from colorfield.fields import ColorField
 
 
-class Order(models.Model):
+class TrackModifyDate(models.Model):
+    data_modificato = models.DateTimeField(auto_now=True)
+    data_creato = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        abstract = True
+
+
+class Order(TrackModifyDate):
     id = ShortUUIDField(
         length=8,
         alphabet="abcdefghijkmnpqrstuvwxyz23456789",
@@ -61,18 +71,34 @@ class Order(models.Model):
     RgInvoiced = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgNotes = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
+    data_modificato = models.DateTimeField(auto_now=True)
+    data_creato = models.DateTimeField(auto_now_add=True)
 
 
-class Posa(models.Model):
+class Posa(TrackModifyDate):
     order = models.OneToOneField(
         "Order", null=False, primary_key=True, on_delete=models.CASCADE
     )
-    descrizione = models.CharField(max_length=100, null=True)
+    descrizione = models.TextField(max_length=500, null=True)
     tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
+    stato = models.ForeignKey("StatoPosa", null=True, on_delete=models.PROTECT)
+    telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
+    telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
+
+
+class StatoPosa(models.Model):
+    descrizione = models.CharField(max_length=20, null=False)
+    colore = ColorField(default="#FF0000", null=False)
+
+    def __str__(self) -> str:
+        return self.descrizione
 
 
 class TipoPosa(models.Model):
     descrizione = models.CharField(max_length=20)
+
+    def __str__(self) -> str:
+        return self.descrizione
 
 
 @receiver(post_save, sender=Order)

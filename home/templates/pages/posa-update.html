@@ -1,5 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
+{% load bootstrap4 %}
+
 
 {% block breadcrumbs %}{% endblock breadcrumbs %}
 
@@ -18,16 +20,22 @@
                         <div class="col-md-12">
                             <form action="" method="post">
                                 {% csrf_token %}
-                                <p>Ragione sociale: {{ posa.order.CompanyName }}</p>
+                                <p>Ragione sociale: <b>{{ posa.order.CompanyName }}</b></p>
                                 <p>Indirizzo: {{ posa.order.Address }} {{ posa.order.ZIPCode }} {{ posa.order.City }}
                                     {{posa.order.County }}</p>
+                                <p>Riferimento ordine:
+                                    <code>{{ posa.order.InternalOrdNo }}</code>
+                                </p>
                                 {{ form.non_field_errors }}
-                                <div class="fieldWrapper">
-                                    {{ form.descrizione.errors }}
-                                    <label for="{{ form.descrizione.id_for_label }}">Descrizione:</label>
-                                    {{ form.descrizione }}
-                                </div>
-                                <input type="submit" value="Submit">
+                                {% bootstrap_field form.tipo %}
+                                {% bootstrap_field form.descrizione %}
+                                {% bootstrap_field form.telefono1 %}
+                                {% bootstrap_field form.telefono2 %}
+                                {% buttons %}
+                                <button type="submit" class="btn btn-primary">
+                                    Conferma modifiche
+                                </button>
+                                {% endbuttons %}
                             </form>
 
                         </div>

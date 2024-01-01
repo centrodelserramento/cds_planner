@@ -66,6 +66,9 @@ INSTALLED_APPS = [
     "django_api_gen",  # Django API GENERATOR  # <-- NEW
     "rest_framework",  # Include DRF           # <-- NEW
     "rest_framework.authtoken",  # Include DRF Auth      # <-- NEW
+    "phonenumber_field",
+    "bootstrap4",
+    "colorfield",
 ]
 
 MIDDLEWARE = [
@@ -156,9 +159,9 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "it"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Europe/Rome"
 
 USE_I18N = True
 
@@ -210,3 +213,5 @@ REST_FRAMEWORK = {
     ],
 }
 ########################################
+
+PHONENUMBER_DEFAULT_REGION = "IT"
