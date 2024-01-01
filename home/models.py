@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 from colorfield.fields import ColorField
+from django.urls import reverse
 
 
 class TrackModifyDate(models.Model):
@@ -89,6 +90,8 @@ class Posa(TrackModifyDate):
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
     telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
 
+    def get_absolute_url(self):
+        return reverse("posa-update", kwargs={"pk": self.pk})
 
 class StatoPosa(models.Model):
     descrizione = models.CharField(max_length=20, null=False)

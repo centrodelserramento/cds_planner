@@ -29,7 +29,7 @@
                             </p>
                             {% if user.is_authenticated %}
 
-                            <form action="" method="post">
+                            <form method="post">
                                 {% csrf_token %}
 
                                 {{ form.non_field_errors }}
@@ -42,7 +42,6 @@
                                 {% bootstrap_field form.telefono1 %}
                                 {% bootstrap_field form.telefono2 %}
                                 {% buttons %}
-                                <input type="text" name="testpicker" class="datetimepicker" />
                                 <button type="submit" class="btn btn-primary">
                                     Conferma modifiche
                                 </button>
