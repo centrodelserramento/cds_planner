@@ -6,4 +6,6 @@ from . import views
 urlpatterns = [
   path(''       , views.index,  name='index'),
   path('tables/', views.tables, name='tables'),
+  path("ordine/<pk>/", views.PosaUpdateView.as_view(), name="posa-update"),
+
 ]

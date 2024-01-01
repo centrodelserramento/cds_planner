@@ -12,7 +12,7 @@ from django.contrib.auth.views import (
     PasswordResetConfirmView,
     PasswordResetView,
 )
-from django.views.generic import CreateView, DetailView
+from django.views.generic import CreateView, DetailView, UpdateView
 from django.contrib.auth import logout
 
 from django.contrib.auth.decorators import login_required
@@ -33,7 +33,9 @@ def tables(request):
     return render(request, "pages/dynamic-tables.html", context)
 
 
-class OrderDetailView(DetailView):
-    model = Order
-    template_name = "pages/order-detail.html"
-    context_object_name = "order"
+class PosaUpdateView(UpdateView):
+    model = Posa
+    template_name = "pages/posa-update.html"
+    context_object_name = "posa"
+    fields = "__all__"
+

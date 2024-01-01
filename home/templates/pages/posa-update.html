@@ -1,0 +1,40 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="row">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Appuntamento di posa</h5>
+                </div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <form action="" method="post">
+                                {% csrf_token %}
+                                <p>Ragione sociale: {{ posa.order.CompanyName }}</p>
+                                <p>Indirizzo: {{ posa.order.Address }} {{ posa.order.ZIPCode }} {{ posa.order.City }}
+                                    {{posa.order.County }}</p>
+                                {{ form.non_field_errors }}
+                                <div class="fieldWrapper">
+                                    {{ form.descrizione.errors }}
+                                    <label for="{{ form.descrizione.id_for_label }}">Descrizione:</label>
+                                    {{ form.descrizione }}
+                                </div>
+                                <input type="submit" value="Submit">
+                            </form>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
