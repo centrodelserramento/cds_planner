@@ -4,6 +4,8 @@
 {% get_current_language_bidi as LANGUAGE_BIDI %}
 {% get_direction as direction %}
 {% get_admin_setting as admin_setting %}
+{% load bootstrap4 %}
+
 <html lang="en">
 
 <head>
@@ -38,13 +40,7 @@
           <!-- [ breadcrumb ] end -->
           <div class="main-body">
             <div class="page-wrapper">
-              {% if messages %}
-              <ul class="messages">
-                {% for message in messages %}
-                <li {% if message.tags %} class=" {{ message.tags }} " {% endif %}> {{ message }} </li>
-                {% endfor %}
-              </ul>
-              {% endif %}
+              {% bootstrap_messages %}
               {% block content %}{% endblock content %}
             </div>
           </div>
