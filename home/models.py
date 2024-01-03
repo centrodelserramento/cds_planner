@@ -72,8 +72,6 @@ class Order(TrackModifyDate):
     RgInvoiced = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgNotes = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
-    data_modificato = models.DateTimeField(auto_now=True)
-    data_creato = models.DateTimeField(auto_now_add=True)
 
 
 class Posa(TrackModifyDate):
@@ -82,16 +80,24 @@ class Posa(TrackModifyDate):
     )
     descrizione = models.TextField(max_length=500, null=True)
     data = models.DateField(null=True, blank=True)
-    ora = models.TimeField(null=True, blank=True, help_text="Ora di inizio posa, esempio 14:30")
+    ora = models.TimeField(
+        null=True, blank=True, help_text="Ora di inizio posa, esempio 14:30"
+    )
     durata_ore = models.PositiveSmallIntegerField(null=True, blank=True)
     durata_minuti = models.PositiveSmallIntegerField(null=True, default=0)
     tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
     stato = models.ForeignKey("StatoPosa", null=True, on_delete=models.PROTECT)
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
     telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
+    utente_modificato_per_ultimo = models.ForeignKey(
+        "auth.User",
+        null=True,
+        on_delete=models.PROTECT,
+    )
 
     def get_absolute_url(self):
         return reverse("posa-update", kwargs={"pk": self.pk})
+
 
 class StatoPosa(models.Model):
     descrizione = models.CharField(max_length=20, null=False)

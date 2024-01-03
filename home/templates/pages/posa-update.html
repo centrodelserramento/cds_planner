@@ -47,6 +47,16 @@
                                 </button>
                                 {% endbuttons %}
                             </form>
+                            {% if user.is_superuser %}
+                            <div class="alert alert-primary" role="alert">
+                                <h5>Area visibile solo a supervisor</h5>
+                                <ul>
+                                    <li>Posa creata: {{ posa.data_creato }}</li>
+                                    <li>Posa modificata: {{ posa.data_modificato }}</li>
+                                    <li>Da: {{ posa.utente_modificato_per_ultimo }} </li>
+                                </ul>
+                              </div>
+                            {% endif %}
                             {% else %}
                             <p>Descrizione: {{ form.descrizione.value|default_if_none:"" }}</p>
                             <p>Telefono cliente 1: {{ form.telefono1.value|default_if_none:"" }}</p>

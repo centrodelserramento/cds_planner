@@ -38,7 +38,18 @@ class PosaUpdateView(SuccessMessageMixin, UpdateView):
     model = Posa
     template_name = "pages/posa-update.html"
     context_object_name = "posa"
-    fields = ["data","ora","durata_ore","durata_minuti","tipo","telefono1","telefono2","descrizione"]
+    fields = [
+        "data",
+        "ora",
+        "durata_ore",
+        "durata_minuti",
+        "tipo",
+        "telefono1",
+        "telefono2",
+        "descrizione",
+    ]
     success_message = "L'evento di posa e' stato aggiornato con successo"
 
-
+    def form_valid(self, form):
+        form.instance.utente_modificato_per_ultimo = self.request.user
+        return super().form_valid(form)

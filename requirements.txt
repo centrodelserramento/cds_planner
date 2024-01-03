@@ -21,3 +21,4 @@ gunicorn==21.2.0
 shortuuid
 django-phonenumber-field[phonenumbers]
 django-colorfield
+django-bootstrap4
