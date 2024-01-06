@@ -34,20 +34,37 @@ def tables(request):
     return render(request, "pages/dynamic-tables.html", context)
 
 
+from django import forms
+from django.contrib.auth.models import Group, User
+from .models import Posa  # replace with your actual model name
+
+
+class PosaForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        posatori_group = Group.objects.get(name="Posatori")
+        self.fields["posatori"].queryset = User.objects.filter(groups=posatori_group)
+
+    class Meta:
+        model = Posa
+        fields = [
+            "data",
+            "ora",
+            "durata_ore",
+            "durata_minuti",
+            "tipo",
+            "telefono1",
+            "telefono2",
+            "descrizione",
+            "posatori",
+        ]
+
+
 class PosaUpdateView(SuccessMessageMixin, UpdateView):
     model = Posa
+    form_class = PosaForm
     template_name = "pages/posa-update.html"
     context_object_name = "posa"
-    fields = [
-        "data",
-        "ora",
-        "durata_ore",
-        "durata_minuti",
-        "tipo",
-        "telefono1",
-        "telefono2",
-        "descrizione",
-    ]
     success_message = "L'evento di posa e' stato aggiornato con successo"
 
     def form_valid(self, form):
