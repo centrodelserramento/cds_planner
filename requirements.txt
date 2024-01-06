@@ -22,3 +22,8 @@ shortuuid
 django-phonenumber-field[phonenumbers]
 django-colorfield
 django-bootstrap4
+
+# google calendar API
+google-api-python-client
+google-auth-httplib2
+google-auth-oauthlib
