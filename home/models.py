@@ -16,12 +16,6 @@ class TrackModifyDate(models.Model):
 
 
 class Order(TrackModifyDate):
-    id = ShortUUIDField(
-        length=8,
-        alphabet="abcdefghijkmnpqrstuvwxyz23456789",
-        primary_key=True,
-    )
-    index = models.BigIntegerField(blank=True, null=True)
     SaleOrdId = models.BigIntegerField(blank=True, null=True)
     InternalOrdNo = models.TextField(blank=True, null=True)
     ExternalOrdNo = models.TextField(blank=True, null=True)
@@ -75,9 +69,12 @@ class Order(TrackModifyDate):
 
 
 class Posa(TrackModifyDate):
-    order = models.OneToOneField(
-        "Order", null=False, primary_key=True, on_delete=models.CASCADE
+    id = ShortUUIDField(
+        length=8,
+        alphabet="abcdefghijkmnpqrstuvwxyz23456789",
+        primary_key=True,
     )
+    ordine = models.BigIntegerField()
     descrizione = models.TextField(max_length=500, null=True)
     data = models.DateField(null=True, blank=True)
     ora = models.TimeField(
