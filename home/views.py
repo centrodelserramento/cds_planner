@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import datetime
 from admin_datta.forms import (
     RegistrationForm,
     LoginForm,
@@ -22,11 +23,20 @@ from .models import *
 
 
 def index(request):
+    from django.contrib.auth.forms import AuthenticationForm
+    form = AuthenticationForm()
     context = {
         "segment": "index",
         #'products' : Product.objects.all()
+        'form': form
     }
-    return render(request, "pages/index.html", context)
+    # if user is in group "Posatori"
+    if request.user.groups.filter(name="Posatori").exists():
+        context["pose_posatori"] = {
+            "Pose future":Posa.objects.filter(posatori=request.user, data__gte=datetime.date.today()).order_by("data"),
+         "Pose passate":Posa.objects.filter(posatori=request.user, data__lt=datetime.date.today()).order_by("-data")[:10]
+        }
+    return render(request, "pages/myindex.html", context)
 
 
 def tables(request):
@@ -37,7 +47,6 @@ def tables(request):
 from django import forms
 from django.contrib.auth.models import Group, User
 from .models import Posa  # replace with your actual model name
-
 
 class PosaForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
@@ -70,3 +79,19 @@ class PosaUpdateView(SuccessMessageMixin, UpdateView):
     def form_valid(self, form):
         form.instance.utente_modificato_per_ultimo = self.request.user
         return super().form_valid(form)
+
+def ordine(request, numero_ordine):
+    # get orders which have saleordid = numero_ordine
+    # sort by RgLine
+
+    righe_ordine = Order.objects.filter(SaleOrdId=numero_ordine).order_by('RgLine')
+    pose = Posa.objects.filter(ordine=numero_ordine)
+    context = {
+        "righe_ordine": righe_ordine,
+        "pose": pose,
+    }
+    return render(request, "pages/ordine.html", context)
+
+def crea_posa(request, numero_ordine):
+    posa = Posa.objects.create(ordine=numero_ordine)
+    return redirect("posa-update", pk=posa.pk)

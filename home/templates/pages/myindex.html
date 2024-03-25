@@ -1,0 +1,87 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+  <!-- [ Main Content ] start -->
+  <div class="row">
+    
+    <!--[ Recent Users ] start-->
+    <div class="col-xl-8 col-md-6">
+    <h1>Sistema di gestione degli appuntamenti di posa</h1>
+
+    {% if user.is_authenticated %}
+        {% for group in user.groups.all %}
+            {% if group.name == 'Posatori' %}
+            {% for nome_pose, pose in pose_posatori.items %}
+            <div class="card Recent-Users">
+                <div class="card-header">
+                    <h5>{{ nome_pose }}</h5>
+                </div>
+                <div class="card-block px-0 py-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                        <tbody>
+                            {% for posa in pose %}
+                            <tr class="unread">
+                                <td>
+                                <h6 class="mb-1">{{ posa.ordini.0.CompanyName }}</h6>
+                                <p class="m-0"> {{ posa.ordini.0.Address }} {{ posa.ordini.0.ZIPCode }} {{ posa.ordini.0.City }}
+                                            {{posa.ordini.0.County }}</p>
+                                </td>
+                                <td>
+                                <h6 class="text-muted">
+                                    <i class="fas fa-circle text-c-green f-10 m-r-15"></i>
+                                        {{posa.data}} {{posa.ora}} 
+                                    </h6>
+                                </td>
+                                <td><a href="/posa/{{posa.pk}}" class="label theme-bg text-white f-12">Visualizza</a>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                </table>
+                </div>
+            </div>
+        {% endfor %} 
+    {% endif %}
+    {% endfor %}
+    {% else %}
+
+    <p>I clienti possono accedere a informazioni sull'appuntamento utilizzando il link di conferma
+    dell'appuntamento inviato via email oppure presente nel calendario.</p>
+        <div class="card">
+            <div class="card-block px-0 py-3">
+    <form method="post" action="{% url 'login' %}" class="card-body text-center">
+            <div class="row">
+            <p>Sistema di autenticazione riservato al personale</p>
+                {% csrf_token %}
+                <div class="input-group mb-3">
+                    <input 
+                        type="text" 
+                        class="form-control"
+                        name="{{ form.username.name }}" 
+                        id="{{ form.username.id_for_label }}"
+                        placeholder="{{ form.username.label }}"
+                    >
+                </div>
+                <div class="input-group mb-3">
+                    <input 
+                    type="password" 
+                    class="form-control"
+                    name="{{ form.password.name }}" 
+                    id="{{ form.password.id_for_label }}"
+                    placeholder="{{ form.password.label }}"
+                    >
+                </div>
+                <button class="btn btn-primary shadow-2 mb-4">Login</button>
+                </div>
+    </form>
+
+    {% endif %}        
+  </div>
+  <!-- [ Main Content ] end -->
+
+{% endblock content %}

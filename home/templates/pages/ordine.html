@@ -1,0 +1,87 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap-datetimepicker.css">
+{% endblock extrastyle %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="row">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Ordine {{righe_ordine.0.SaleOrdId }} </h5>
+                </div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p>Questi dati sono importati ed aggiornati automaticamente dal database del Centro Del Serramento, non sono modificabili dal planner.</p>
+                            <p>Questa pagina e' solo visibile ai manager, non e' accessibile a posatori e clienti</p>
+                            <p>Ragione sociale: <b>{{ righe_ordine.0.CompanyName }}</b></p>
+                             <p>Indirizzo: {{ righe_ordine.0.Address }} {{ righe_ordine.0.ZIPCode }} {{ righe_ordine.0.City }}
+                                {{righe_ordine.0.County }}</p>
+                            <p>Riferimento ordine:
+                                <code>{{ righe_ordine.0.InternalOrdNo }}</code>
+                            </p>
+                            <p>Materiali</p>
+                            <ul>
+                            {% for riga in righe_ordine %}
+                            {% if riga.RgLineType == "3538947" %}
+                            <li>{{ riga.RgDescription }} - <b>{{ riga.RgItem }}</b>: {{ riga.RgQty }} {{ riga.RgUoM }}</p>
+                                {% endif %}
+                            {% endfor %}
+                            </ul>
+                            <p>Pose</p>
+                            <ul>
+                            {% for posa in pose %}
+                                <li> <a href="/posa/{{posa.pk}}"> {{ posa.data }} </a></li>
+                            {% endfor %}
+                            </ul>
+                            <a href="/crea-posa/{{righe_ordine.0.SaleOrdId}}">
+                                <button type="button" class="btn btn-primary">Crea nuova posa</button>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js" crossorigin="anonymous"
+    referrerpolicy="no-referrer"></script>
+<script src="/static/assets/js/bootstrap-datetimepicker.min.js"></script>
+<script>
+    jQuery(document).ready(function ($) {
+        if (window.jQuery().datetimepicker) {
+            $('#id_data').datetimepicker({
+                // Formats
+                // follow MomentJS docs: https://momentjs.com/docs/#/displaying/format/
+                format: 'DD-MM-YYYY',
+
+                // Your Icons
+                // as Bootstrap 4 is not using Glyphicons anymore
+                icons: {
+                    time: 'fa fa-clock-o',
+                    date: 'fa fa-calendar',
+                    up: 'fa fa-chevron-up',
+                    down: 'fa fa-chevron-down',
+                    previous: 'fa fa-chevron-left',
+                    next: 'fa fa-chevron-right',
+                    today: 'fa fa-check',
+                    clear: 'fa fa-trash',
+                    close: 'fa fa-times'
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_js %}

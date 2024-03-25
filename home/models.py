@@ -1,3 +1,4 @@
+from typing import Any
 from django.db import models
 from shortuuid.django_fields import ShortUUIDField
 from django.db.models.signals import post_save
@@ -16,6 +17,10 @@ class TrackModifyDate(models.Model):
 
 
 class Order(TrackModifyDate):
+
+    def __str__(self):
+        return "Ordine " + str(self.SaleOrdId) + " Linea " + str(self.RgLine)
+
     SaleOrdId = models.BigIntegerField(blank=True, null=True)
     InternalOrdNo = models.TextField(blank=True, null=True)
     ExternalOrdNo = models.TextField(blank=True, null=True)
@@ -69,6 +74,10 @@ class Order(TrackModifyDate):
 
 
 class Posa(TrackModifyDate):
+    def __str__(self) -> str:
+        return "Posa " + self.id + " Ordine " + str(self.ordine) + " " + str(self.data)
+    def ordini(self):
+        return Order.objects.filter(SaleOrdId=self.ordine)
     id = ShortUUIDField(
         length=8,
         alphabet="abcdefghijkmnpqrstuvwxyz23456789",
@@ -110,14 +119,3 @@ class TipoPosa(models.Model):
 
     def __str__(self) -> str:
         return self.descrizione
-
-
-@receiver(post_save, sender=Order)
-def create_posa(sender, instance, created, **kwargs):
-    if created:
-        Posa.objects.create(order=instance)
-
-
-@receiver(post_save, sender=Order)
-def save_posa(sender, instance, **kwargs):
-    instance.posa.save()

@@ -21,11 +21,11 @@
                 <div class="card-block">
                     <div class="row">
                         <div class="col-md-12">
-                            <p>Ragione sociale: <b>{{ posa.order.CompanyName }}</b></p>
-                            <p>Indirizzo: {{ posa.order.Address }} {{ posa.order.ZIPCode }} {{ posa.order.City }}
-                                {{posa.order.County }}</p>
+                            <p>Ragione sociale: <b>{{ posa.ordini.0.CompanyName }}</b></p>
+                            <p>Indirizzo: {{ posa.ordini.0.Address }} {{ posa.ordini.0.ZIPCode }} {{ posa.ordini.0.City }}
+                                {{posa.ordini.0.County }}</p>
                             <p>Riferimento ordine:
-                                <code>{{ posa.order.InternalOrdNo }}</code>
+                                <code>{{ posa.ordini.0.InternalOrdNo }}</code>
                             </p>
                             {% if user.is_authenticated %}
 
