@@ -22,6 +22,7 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include('admin_datta.urls')),
     path('', include('django_dyn_dt.urls')), # <-- NEW: Dynamic_DT Routing   
+    path("__debug__/", include("debug_toolbar.urls")),
 ]
 
 # Lazy-load on routing is needed

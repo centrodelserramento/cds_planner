@@ -69,9 +69,11 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "bootstrap4",
     "colorfield",
+    "debug_toolbar",
 ]
 
 MIDDLEWARE = [
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -215,3 +217,7 @@ REST_FRAMEWORK = {
 ########################################
 
 PHONENUMBER_DEFAULT_REGION = "IT"
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
