@@ -29,7 +29,7 @@
                             <p>Riferimento ordine:
                                 <code>{{ righe_ordine.0.InternalOrdNo }}</code>
                             </p>
-                            <p>Materiali</p>
+                            <h3>Materiali</h3>
                             <ul>
                             {% for riga in righe_ordine %}
                             {% if riga.RgLineType == "3538947" %}
@@ -37,7 +37,11 @@
                                 {% endif %}
                             {% endfor %}
                             </ul>
-                            <p>Pose</p>
+                            <h3>Descrizione completa ordine</h3>
+                            {% for riga in righe_ordine %}
+                            <p>{{ riga.RgDescription }}</p>
+                            {% endfor %}
+                            <h3>Pose</h3>
                             <ul>
                             {% for posa in pose %}
                                 <li> <a href="/posa/{{posa.pk}}"> {{ posa.data }} </a></li>
