@@ -95,6 +95,8 @@ class Posa(TrackModifyDate):
     stato = models.ForeignKey("StatoPosa", null=True, on_delete=models.PROTECT)
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
     telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
+    nota_posatore = models.TextField(max_length=500, blank=True)
+    nota_cliente = models.TextField(max_length=500, blank=True)
     utente_modificato_per_ultimo = models.ForeignKey(
         "auth.User",
         null=True,
