@@ -1,6 +1,7 @@
 {% extends 'layouts/base.html' %}
 {% load static %}
 {% load bootstrap4 %}
+{% load auth_extras %}
 
 {% block extrastyle %}
 <link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap-datetimepicker.css">
@@ -24,46 +25,90 @@
                             <p>Ragione sociale: <b>{{ posa.ordini.0.CompanyName }}</b></p>
                             <p>Indirizzo: {{ posa.ordini.0.Address }} {{ posa.ordini.0.ZIPCode }} {{ posa.ordini.0.City }}
                                 {{posa.ordini.0.County }}</p>
-                            <p>Riferimento ordine:
-                                <code>{{ posa.ordini.0.InternalOrdNo }}</code>
-                            </p>
-                            {% if user.is_authenticated %}
 
-                            <form method="post">
-                                {% csrf_token %}
+                                {% if request.user|has_group:"Managers" %} 
+                                <p>Riferimento ordine:
+                                    <code>{{ posa.ordini.0.InternalOrdNo }}</code>
+                                </p>
+                                <p>Numero ordine:
+                                    <code>{{ posa.ordine }}</code>
+                                    <a href="{% url 'ordine' posa.ordine %}" class="btn btn-primary">Dettaglio ordine</a>
+                                </p>
+                                <form method="post">
+                                    {% csrf_token %}
 
-                                {{ form.non_field_errors }}
-                                {% bootstrap_field form.data %}
-                                {% bootstrap_field form.ora %}
-                                {% bootstrap_field form.durata_ore %}
-                                {% bootstrap_field form.durata_minuti %}
-                                {% bootstrap_field form.tipo %}
-                                {% bootstrap_field form.descrizione %}
-                                {% bootstrap_field form.telefono1 %}
-                                {% bootstrap_field form.telefono2 %}
-                                {% bootstrap_field form.posatori %}
-                                {% buttons %}
-                                <button type="submit" class="btn btn-primary">
-                                    Conferma modifiche
-                                </button>
-                                {% endbuttons %}
-                            </form>
-                            {% if user.is_superuser %}
-                            <div class="alert alert-primary" role="alert">
-                                <h5>Area visibile solo a supervisor</h5>
-                                <ul>
-                                    <li>Posa creata: {{ posa.data_creato }}</li>
-                                    <li>Posa modificata: {{ posa.data_modificato }}</li>
-                                    <li>Da: {{ posa.utente_modificato_per_ultimo }} </li>
-                                </ul>
-                              </div>
-                            {% endif %}
-                            {% else %}
+                                    {{ form.non_field_errors }}
+                                    {% bootstrap_field form.data %}
+                                    {% bootstrap_field form.ora %}
+                                    {% bootstrap_field form.durata_ore %}
+                                    {% bootstrap_field form.durata_minuti %}
+                                    {% bootstrap_field form.tipo %}
+                                    {% bootstrap_field form.descrizione %}
+                                    {% bootstrap_field form.telefono1 %}
+                                    {% bootstrap_field form.telefono2 %}
+                                    {% bootstrap_field form.posatori %}
+                                    {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        Conferma modifiche
+                                    </button>
+                                    {% endbuttons %}
+                                </form>
+                                {% else %}
+                            <p>Data: {{ form.data.value|default_if_none:"" }}</p>
+                            <p>Ora: {{ form.ora.value|default_if_none:"" }}</p>
+                            <p>Durata: {{ form.durata_ore.value|default_if_none:"" }}:{{ form.durata_minuti.value|default_if_none:"00"}}</p>
                             <p>Descrizione: {{ form.descrizione.value|default_if_none:"" }}</p>
                             <p>Telefono cliente 1: {{ form.telefono1.value|default_if_none:"" }}</p>
+                            {% if form.telefono2.value %}
                             <p>Telefono cliente 2: {{ form.telefono2.value|default_if_none:"" }}</p>
-
                             {% endif %}
+
+                            {% for posatore in form.posatori %}
+                                <p>Posatore: {{ posatore }}</p>
+                            {% endfor %}
+                            {% endif %}
+
+                                {% if request.user|has_group:"Posatori" %} 
+                                <form method="post">
+                                    {% csrf_token %}
+
+                                    {{ form.non_field_errors }}
+                                    {% bootstrap_field form.nota_posatore %}
+                                    {% buttons %}
+                                    <button type="submit" class="btn btn-primary">
+                                        Conferma modifiche
+                                    </button>
+                                    {% endbuttons %}
+                                </form>
+                                {% else %}
+                                <p>Note posatore: {{ form.nota_posatore.value|default:"Nessuna" }}</p>
+                                {% endif %} 
+                                {% if request.user|has_group:"Managers" or request.user|has_group:"Posatori" %}
+                                <p>Nota cliente: {{ form.nota_cliente.value|default:"Nessuna" }}</p>
+                                {% else %}
+                                    <form method="post">
+                                        {% csrf_token %}
+
+                                        {{ form.non_field_errors }}
+                                        {% bootstrap_field form.nota_cliente %}
+                                        {% buttons %}
+                                        <button type="submit" class="btn btn-primary">
+                                            Conferma modifiche
+                                        </button>
+                                        {% endbuttons %}
+                                    </form>
+                                {% endif %}
+                                {% if user.is_superuser %}
+                                <div class="alert alert-primary" role="alert">
+                                    <h5>Area visibile solo a supervisor</h5>
+                                    <ul>
+                                        <li>Posa creata: {{ posa.data_creato }}</li>
+                                        <li>Posa modificata: {{ posa.data_modificato }}</li>
+                                        <li>Da: {{ posa.utente_modificato_per_ultimo }} </li>
+                                    </ul>
+                                </div>
+                                {% endif %}
+
                         </div>
                     </div>
                 </div>
