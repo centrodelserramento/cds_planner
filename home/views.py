@@ -66,6 +66,8 @@ class PosaForm(forms.ModelForm):
             "telefono2",
             "descrizione",
             "posatori",
+            "nota_cliente",
+            "nota_posatore",
         ]
 
 
