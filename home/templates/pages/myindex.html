@@ -9,7 +9,7 @@
   <div class="row">
     
     <!--[ Recent Users ] start-->
-    <div class="col-xl-8 col-md-6">
+    <div class="col-xl-12 col-md-6">
     <h1>Sistema di gestione degli appuntamenti di posa</h1>
 
     {% if user.is_authenticated %}
@@ -40,7 +40,49 @@
                                 <td><a href="/posa/{{posa.pk}}" class="label theme-bg text-white f-12">Visualizza</a>
                                 </td>
                             </tr>
-                        {% endfor %}
+                            {% endfor %}
+                        </tbody>
+                </table>
+                </div>
+            </div>
+        {% endfor %} 
+            {% elif group.name == 'Managers' %}
+            {% for tipo_ordine, ordini_per_tipo in ordini.items %}
+            <div class="card Recent-Users">
+                <div class="card-header">
+                    <h5>{{ tipo_ordine }}</h5>
+                </div>
+                <div class="card-block px-0 py-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover">
+                        <tbody>
+                            {% for ordine in ordini_per_tipo %}
+                            <tr class="unread">
+                                <td>
+                                <h6 class="mb-1">{{ ordine.CompanyName }}</h6>
+                                <p class="m-0"> {{ ordine.City }} </p>
+                                <a href="/ordine/{{ordine.ordine_url}}" class="label theme-bg text-white f-12">Visualizza</a>
+                                </td>
+                                <td>
+                                <h6 class="text-muted">
+                                    <p>Servizi</p>
+                                    <ul>
+                                    {% for line in ordine.lista_servizi %}
+                                        <li>{{ line }}</li>
+                                    {% endfor %}
+                                    </ul>
+                                    <p>Materiali</p>
+                                    <ul>
+                                    {% for line in ordine.lista_materiali %}
+                                        <li><b>{{ line.RgItem }}</b>: {{line.RgQty|floatformat:"0"}} {{line.RgUoM }}<br />{{line.RgDescription}} </li>
+                                    {% endfor %}
+                                    </ul>
+                                    </h6>
+                                </td>
+                                <td>
+                                </td>
+                            </tr>
+                            {% endfor %}
                         </tbody>
                 </table>
                 </div>

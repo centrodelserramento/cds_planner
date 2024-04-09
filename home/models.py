@@ -6,7 +6,19 @@ from django.dispatch import receiver
 from phonenumber_field.modelfields import PhoneNumberField
 from colorfield.fields import ColorField
 from django.urls import reverse
+from django.conf import settings
+from datetime import timedelta
 
+from oauth2client.service_account import ServiceAccountCredentials
+from googleapiclient.discovery import build
+from datetime import datetime
+
+SCOPES = ["https://www.googleapis.com/auth/calendar"]
+SERVICE_ACCOUNT_FILE = './calendario-centrodelserramento-09627e115b67.json'
+credential = ServiceAccountCredentials.from_json_keyfile_name(
+    SERVICE_ACCOUNT_FILE, SCOPES)
+delegated_credentials = credential.create_delegated("andrea@andreazonca.com")
+calendar_service = build("calendar", "v3", credentials=delegated_credentials)
 
 class TrackModifyDate(models.Model):
     data_modificato = models.DateTimeField(auto_now=True)
@@ -19,8 +31,10 @@ class TrackModifyDate(models.Model):
 class Order(TrackModifyDate):
 
     def __str__(self):
-        return "Ordine " + str(self.SaleOrdId) + " Linea " + str(self.RgLine)
+        return "Ordine " + str(self.InternalOrdNo) + " Linea " + str(self.RgLine)
 
+    def ordine_url(self):
+        return self.InternalOrdNo.replace("/", "-")
     SaleOrdId = models.BigIntegerField(blank=True, null=True)
     InternalOrdNo = models.TextField(blank=True, null=True)
     ExternalOrdNo = models.TextField(blank=True, null=True)
@@ -72,18 +86,30 @@ class Order(TrackModifyDate):
     RgNotes = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
 
+    # Only in the planner
+    tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
+
+    def lista_servizi(self):
+        linee_installazione = Order.objects.filter(SaleOrdId=self.SaleOrdId, RgLineType=3538946).exclude(RgItem__startswith="CDS")
+        return linee_installazione.values_list("RgDescription", flat=True)
+
+    def lista_materiali(self):
+        linee_materiali = Order.objects.filter(SaleOrdId=self.SaleOrdId, RgLineType=3538947)
+        return linee_materiali.values("RgDescription", "RgItem", "RgQty", "RgUoM")
 
 class Posa(TrackModifyDate):
     def __str__(self) -> str:
         return "Posa " + self.id + " Ordine " + str(self.ordine) + " " + str(self.data)
     def ordini(self):
-        return Order.objects.filter(SaleOrdId=self.ordine)
+        return Order.objects.filter(InternalOrdNo=self.ordine)
     id = ShortUUIDField(
         length=8,
         alphabet="abcdefghijkmnpqrstuvwxyz23456789",
         primary_key=True,
     )
-    ordine = models.BigIntegerField()
+    ordine = models.CharField(max_length=20, blank=True)
+    def ordine_url(self):
+        return self.ordine.replace("/", "-")
     descrizione = models.TextField(max_length=500, null=True)
     data = models.DateField(null=True, blank=True)
     ora = models.TimeField(
@@ -91,10 +117,15 @@ class Posa(TrackModifyDate):
     )
     durata_ore = models.PositiveSmallIntegerField(null=True, blank=True)
     durata_minuti = models.PositiveSmallIntegerField(null=True, default=0)
-    tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
+
+    def calcola_ora_fine(self):
+        data_ora = datetime.combine(self.data, self.ora)
+        ora_fine = data_ora + timedelta(minutes=self.durata_minuti, hours=self.durata_ore)
+        return ora_fine
     stato = models.ForeignKey("StatoPosa", null=True, on_delete=models.PROTECT)
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
     telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
+    event_id = models.CharField(max_length=200, blank=True)
     nota_posatore = models.TextField(max_length=500, blank=True)
     nota_cliente = models.TextField(max_length=500, blank=True)
     utente_modificato_per_ultimo = models.ForeignKey(
@@ -107,6 +138,47 @@ class Posa(TrackModifyDate):
     def get_absolute_url(self):
         return reverse("posa-update", kwargs={"pk": self.pk})
 
+    def save(self, *args, **kwargs):
+
+        if self.posatori.count() > 0 and self.data is not None and self.ora is not None and self.durata_ore is not None and self.durata_minuti is not None:
+            description = "<b><a href=\"" + self.get_absolute_url() + "\">Link al sistema di gestione pose</a></b><br><br>Ordine: " + \
+                str(self.ordine) + "<br>Cliente: " + self.ordini()[0].CompanyName + \
+                "<br>Posatori: " + ", ".join([posatore.username for posatore in self.posatori.all()]) + \
+                "<br>Telefono1: " + str(self.telefono1)
+            if self.telefono2:
+                description += "<br>Telefono2: " + str(self.telefono2)
+            description += "<br><br>" + self.descrizione 
+            
+            event = {
+                'summary': 'Appuntamento di posa - ' + self.ordini()[0].CompanyName,
+                'location': self.ordini()[0].Address + ", " + self.ordini()[0].City + ", " + self.ordini()[0].Country,
+                'description' : description,
+                'start': {
+                    'dateTime': str(self.data) + "T" + str(self.ora),
+                    'timeZone': 'Europe/Rome',
+                },
+                'end': {
+                    'dateTime': "T".join(str(self.calcola_ora_fine()).split()),
+                    'timeZone': 'Europe/Rome',
+                },
+                'attendees': [
+                    {'email': 'andrea.zonca@gmail.com'},
+                ],
+                'reminders': {
+                    'useDefault': False,
+                    'overrides': [
+                    {'method': 'email', 'minutes': 24 * 60},
+                    {'method': 'popup', 'minutes': 10},
+                    ],
+                },
+                }
+            if self.event_id == "":
+                calendar_event = calendar_service.events().insert(calendarId=self.posatori.all()[0].calendario.id, body=event).execute()
+                self.event_id = calendar_event['id']
+            else:
+                calendar_event = calendar_service.events().update(calendarId=self.posatori.all()[0].calendario.id, eventId=self.event_id, body=event).execute()
+        super().save(*args, **kwargs)
+    
 
 class StatoPosa(models.Model):
     descrizione = models.CharField(max_length=20, null=False)
@@ -121,3 +193,9 @@ class TipoPosa(models.Model):
 
     def __str__(self) -> str:
         return self.descrizione
+
+class Calendario(models.Model):
+    id = models.CharField(max_length=200, primary_key=True)
+    utente = models.OneToOneField("auth.User", null=False, on_delete=models.CASCADE)
+    def __str__(self) -> str:
+        return "Calendario of " + self.utente.username

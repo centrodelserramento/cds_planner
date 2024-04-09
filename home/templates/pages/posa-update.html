@@ -28,11 +28,8 @@
 
                                 {% if request.user|has_group:"Managers" %} 
                                 <p>Riferimento ordine:
-                                    <code>{{ posa.ordini.0.InternalOrdNo }}</code>
-                                </p>
-                                <p>Numero ordine:
                                     <code>{{ posa.ordine }}</code>
-                                    <a href="{% url 'ordine' posa.ordine %}" class="btn btn-primary">Dettaglio ordine</a>
+                                    <a href="{% url 'ordine' posa.ordine_url %}" class="btn btn-primary">Dettaglio ordine</a>
                                 </p>
                                 <form method="post">
                                     {% csrf_token %}
@@ -42,7 +39,6 @@
                                     {% bootstrap_field form.ora %}
                                     {% bootstrap_field form.durata_ore %}
                                     {% bootstrap_field form.durata_minuti %}
-                                    {% bootstrap_field form.tipo %}
                                     {% bootstrap_field form.descrizione %}
                                     {% bootstrap_field form.telefono1 %}
                                     {% bootstrap_field form.telefono2 %}

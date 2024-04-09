@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 import datetime
+from datetime import date
 from admin_datta.forms import (
     RegistrationForm,
     LoginForm,
@@ -33,9 +34,15 @@ def index(request):
     # if user is in group "Posatori"
     if request.user.groups.filter(name="Posatori").exists():
         context["pose_posatori"] = {
-            "Pose future":Posa.objects.filter(posatori=request.user, data__gte=datetime.date.today()).order_by("data"),
-         "Pose passate":Posa.objects.filter(posatori=request.user, data__lt=datetime.date.today()).order_by("-data")[:10]
+            "Pose future":Posa.objects.filter(posatori=request.user, data__gte=date.today()).order_by("data"),
+            "Pose passate":Posa.objects.filter(posatori=request.user, data__lt=date.today()).order_by("-data")[:10]
         }
+    # if user is in group "Manager"
+    if request.user.groups.filter(name="Managers").exists():
+        context["ordini"] = {}
+        context["ordini"]["Da categorizzare"] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=None)
+        for tipo in TipoPosa.objects.all():
+            context["ordini"][tipo.descrizione] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=tipo)
     return render(request, "pages/myindex.html", context)
 
 
@@ -61,7 +68,6 @@ class PosaForm(forms.ModelForm):
             "ora",
             "durata_ore",
             "durata_minuti",
-            "tipo",
             "telefono1",
             "telefono2",
             "descrizione",
@@ -86,7 +92,8 @@ def ordine(request, numero_ordine):
     # get orders which have saleordid = numero_ordine
     # sort by RgLine
 
-    righe_ordine = Order.objects.filter(SaleOrdId=numero_ordine).order_by('RgLine')
+    numero_ordine = numero_ordine.replace("-","/")
+    righe_ordine = Order.objects.filter(InternalOrdNo=numero_ordine).order_by('RgLine')
     pose = Posa.objects.filter(ordine=numero_ordine)
     context = {
         "righe_ordine": righe_ordine,
@@ -95,5 +102,6 @@ def ordine(request, numero_ordine):
     return render(request, "pages/ordine.html", context)
 
 def crea_posa(request, numero_ordine):
+    numero_ordine = numero_ordine.replace("-","/")
     posa = Posa.objects.create(ordine=numero_ordine)
     return redirect("posa-update", pk=posa.pk)
