@@ -8,6 +8,8 @@
 build/
 env
 /staticfiles/
+home/migrations
+*.json
 
 #src
 *.sqlite*
