@@ -75,6 +75,7 @@ class PosaForm(forms.ModelForm):
             "posatori",
             "nota_cliente",
             "nota_posatore",
+            "lista_materiali_visibile_posatori",
         ]
 
 

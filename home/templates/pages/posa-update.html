@@ -26,14 +26,16 @@
                             <p>Indirizzo cantiere: Dovrebbe essere in Mago ma attualmente manca</p>
                             <p>Indirizzo: {{ posa.ordini.0.Address }} {{ posa.ordini.0.ZIPCode }} {{ posa.ordini.0.City }}
                                 {{posa.ordini.0.County }}</p>
-                            <h3>Materiali</h3>
-                            <ul>
-                            {% for riga in posa.ordini %}
-                            {% if riga.RgLineType == "3538947" %}
-                            <li>{{ riga.RgDescription }} - <b>{{ riga.RgItem }}</b>: {{ riga.RgQty }} {{ riga.RgUoM }}</p>
-                                {% endif %}
-                            {% endfor %}
-                            </ul>
+                            {% if request.user|has_group:"Managers" or  request.user|has_group:"Posatori" and posa.lista_materiali_visibile_posatori %} 
+                                <h3>Materiali</h3>
+                                <ul>
+                                {% for riga in posa.ordini %}
+                                {% if riga.RgLineType == "3538947" %}
+                                <li>{{ riga.RgDescription }} - <b>{{ riga.RgItem }}</b>: {{ riga.RgQty }} {{ riga.RgUoM }}</p>
+                                    {% endif %}
+                                {% endfor %}
+                                </ul>
+                            {% endif %}
 
                                 {% if request.user|has_group:"Managers" %} 
                                 <p>Riferimento ordine:
@@ -48,10 +50,12 @@
                                     {% bootstrap_field form.ora %}
                                     {% bootstrap_field form.durata_ore %}
                                     {% bootstrap_field form.durata_minuti %}
-                                    {% bootstrap_field form.descrizione %}
+                                    {% bootstrap_field form.descrizione placeholder='Caricamento servizi in corso...' %}
                                     {% bootstrap_field form.telefono1 %}
                                     {% bootstrap_field form.telefono2 %}
                                     {% bootstrap_field form.posatori %}
+                                    {% bootstrap_field form.posatori %}
+                                    {% bootstrap_field form.lista_materiali_visibile_posatori %}
                                     {% buttons %}
                                     <button type="submit" class="btn btn-primary">
                                         Conferma modifiche
@@ -151,5 +155,11 @@
             });
         }
     });
+    jQuery(document).ready(function ($) {
+    // modify with Javascript the textarea with id id_descrizione
+    // sets its value to "My list of services"
+    $('#id_descrizione').val("{% for line in posa.ordini.0.lista_servizi %}* {{ line }}\n{% endfor %}");
+    });
+
 </script>
 {% endblock extra_js %}

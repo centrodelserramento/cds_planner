@@ -45,7 +45,7 @@
                             <h3>Pose</h3>
                             <ul>
                             {% for posa in pose %}
-                                <li> <a href="/posa/{{posa.pk}}"> {{ posa.data }} </a></li>
+                                <li> <a href="/posa/{{posa.pk}}"> {{ posa.data |default_if_none:"Data da decidere"   }} </a></li>
                             {% endfor %}
                             </ul>
                             <a href="/crea-posa/{{righe_ordine.0.ordine_url}}">
