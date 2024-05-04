@@ -16,7 +16,7 @@
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Ordine {{righe_ordine.0.SaleOrdId }} </h5>
+                    <h5>Ordine {{righe_ordine.0.InternalOrdNo }} </h5>
                 </div>
                 <div class="card-block">
                     <div class="row">
@@ -27,9 +27,6 @@
                             <p>Indirizzo cantiere: Dovrebbe essere in Mago ma attualmente manca</p>
                              <p>Indirizzo: {{ righe_ordine.0.Address }} {{ righe_ordine.0.ZIPCode }} {{ righe_ordine.0.City }}
                                 {{righe_ordine.0.County }}</p>
-                            <p>Riferimento ordine:
-                                <code>{{ righe_ordine.0.InternalOrdNo }}</code>
-                            </p>
                             <h3>Materiali</h3>
                             <ul>
                             {% for riga in righe_ordine %}
@@ -43,11 +40,12 @@
                             <p>{{ riga.RgDescription }}</p>
                             {% endfor %}
                             <h3>Pose</h3>
-                            <ul>
                             {% for posa in pose %}
-                                <li> <a href="/posa/{{posa.pk}}"> {{ posa.data |default_if_none:"Data da decidere"   }} </a></li>
+                                <p> <a href="/posa/{{posa.pk}}">
+                                    
+                                    <i class="fas fa-circle f-10 m-r-15" style="color:{{ posa.stato.colore}}"></i>
+                                    {{ posa.data |default_if_none:"Data da decidere"   }} ({{ posa.stato | default_if_none:"" }})</a></p>
                             {% endfor %}
-                            </ul>
                             <a href="/crea-posa/{{righe_ordine.0.ordine_url}}">
                                 <button type="button" class="btn btn-primary">Crea nuova posa</button>
                             </a>

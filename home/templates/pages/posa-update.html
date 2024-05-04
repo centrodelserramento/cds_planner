@@ -46,6 +46,7 @@
                                     {% csrf_token %}
 
                                     {{ form.non_field_errors }}
+                                    {% bootstrap_field form.stato %}
                                     {% bootstrap_field form.data %}
                                     {% bootstrap_field form.ora %}
                                     {% bootstrap_field form.durata_ore %}
@@ -53,7 +54,6 @@
                                     {% bootstrap_field form.descrizione placeholder='Caricamento servizi in corso...' %}
                                     {% bootstrap_field form.telefono1 %}
                                     {% bootstrap_field form.telefono2 %}
-                                    {% bootstrap_field form.posatori %}
                                     {% bootstrap_field form.posatori %}
                                     {% bootstrap_field form.lista_materiali_visibile_posatori %}
                                     {% buttons %}

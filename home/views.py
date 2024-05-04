@@ -67,6 +67,7 @@ class PosaForm(forms.ModelForm):
         fields = [
             "data",
             "ora",
+            "stato",
             "durata_ore",
             "durata_minuti",
             "telefono1",
@@ -96,10 +97,9 @@ def ordine(request, numero_ordine):
 
     numero_ordine = numero_ordine.replace("-","/")
     righe_ordine = Order.objects.filter(InternalOrdNo=numero_ordine).order_by('RgLine')
-    pose = Posa.objects.filter(ordine=numero_ordine, nel_cestino=False).order_by("data")
     context = {
         "righe_ordine": righe_ordine,
-        "pose": pose,
+        "pose": righe_ordine[0].pose(),
     }
     return render(request, "pages/ordine.html", context)
 

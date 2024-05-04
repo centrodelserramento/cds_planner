@@ -33,6 +33,8 @@ class Order(TrackModifyDate):
     def __str__(self):
         return "Ordine " + str(self.InternalOrdNo) + " Linea " + str(self.RgLine)
 
+    def pose(self):
+        return Posa.objects.filter(ordine=self.InternalOrdNo, nel_cestino=False).order_by("data")
     def ordine_url(self):
         return self.InternalOrdNo.replace("/", "-")
     SaleOrdId = models.BigIntegerField(blank=True, null=True)
