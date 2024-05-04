@@ -133,7 +133,7 @@ class Posa(TrackModifyDate):
         null=True,
         on_delete=models.PROTECT,
     )
-    posatori = models.ManyToManyField("auth.User", related_name="pose")
+    posatori = models.ManyToManyField("auth.User", related_name="pose") # TODO opzionale
 
     def get_absolute_url(self):
         return reverse("posa-update", kwargs={"pk": self.pk})
