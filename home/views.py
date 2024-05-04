@@ -96,7 +96,7 @@ def ordine(request, numero_ordine):
 
     numero_ordine = numero_ordine.replace("-","/")
     righe_ordine = Order.objects.filter(InternalOrdNo=numero_ordine).order_by('RgLine')
-    pose = Posa.objects.filter(ordine=numero_ordine)
+    pose = Posa.objects.filter(ordine=numero_ordine, nel_cestino=False).order_by("data")
     context = {
         "righe_ordine": righe_ordine,
         "pose": pose,
@@ -107,3 +107,9 @@ def crea_posa(request, numero_ordine):
     numero_ordine = numero_ordine.replace("-","/")
     posa = Posa.objects.create(ordine=numero_ordine)
     return redirect("posa-update", pk=posa.pk)
+
+def cancella_posa(request, pk):
+    posa = Posa.objects.get(pk=pk)
+    posa.nel_cestino = True
+    posa.save()
+    return redirect("ordine", numero_ordine=posa.ordine_url())

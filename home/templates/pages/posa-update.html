@@ -61,6 +61,11 @@
                                         Conferma modifiche
                                     </button>
                                     {% endbuttons %}
+                                    {% buttons %}
+                                    <button type="button" class="btn btn-danger">
+                                        <a href="{% url 'cancella-posa' posa.id %}">Cancella posa</a>
+                                    </button>
+                                    {% endbuttons %}
                                 </form>
                                 {% else %}
                             <p>Data: {{ form.data.value|default_if_none:"" }}</p>

@@ -138,6 +138,7 @@ class Posa(TrackModifyDate):
     )
     posatori = models.ManyToManyField("auth.User", related_name="pose", blank=True)
     lista_materiali_visibile_posatori = models.BooleanField(default=True)
+    nel_cestino = models.BooleanField(default=False)
 
     def get_absolute_url(self):
         return reverse("posa-update", kwargs={"pk": self.pk})

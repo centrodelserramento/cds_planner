@@ -57,6 +57,11 @@ File: style.css
 /**  =====================
       Custom css start
 ==========================  **/
+
+/*links inside buttons are white*/
+.btn a {
+  color: #fff;
+}
 body {
   font-family: "Open Sans", sans-serif;
   font-size: 14px;
