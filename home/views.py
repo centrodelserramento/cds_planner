@@ -41,6 +41,7 @@ def index(request):
     if request.user.groups.filter(name="Managers").exists():
         context["ordini"] = {}
         context["ordini"]["Da categorizzare"] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=None)
+        context["ordini"]["Da categorizzare"] = [ordine for ordine in context["ordini"]["Da categorizzare"] if ordine.ha_servizi()]
         for tipo in TipoPosa.objects.all():
             context["ordini"][tipo.descrizione] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=tipo)
     return render(request, "pages/myindex.html", context)

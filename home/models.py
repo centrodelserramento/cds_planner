@@ -89,6 +89,9 @@ class Order(TrackModifyDate):
     # Only in the planner
     tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
 
+    def ha_servizi(self):
+        return Order.objects.filter(SaleOrdId=self.SaleOrdId, RgLineType=3538946).exclude(RgItem__startswith="CDS").exists()
+
     def lista_servizi(self):
         linee_installazione = Order.objects.filter(SaleOrdId=self.SaleOrdId, RgLineType=3538946).exclude(RgItem__startswith="CDS")
         return linee_installazione.values_list("RgDescription", flat=True)
