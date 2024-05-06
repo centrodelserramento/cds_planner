@@ -89,7 +89,7 @@ class Order(TrackModifyDate):
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
 
     # Only in the planner
-    tipo = models.ForeignKey("TipoPosa", null=True, on_delete=models.PROTECT)
+    tipo = models.ForeignKey("TipoPosa", null=True, blank=True, on_delete=models.PROTECT)
 
     def ha_servizi(self):
         return Order.objects.filter(SaleOrdId=self.SaleOrdId, RgLineType=3538946).exclude(RgItem__startswith="CDS").exists()
@@ -155,7 +155,7 @@ class Posa(TrackModifyDate):
             if self.telefono2:
                 description += "<br>Telefono2: " + str(self.telefono2)
             description += "<br><br>" + self.descrizione 
-            
+            attendees = [{'email': 'clientxxxxxxx@gmail.com'},]
             event = {
                 'summary': 'Appuntamento di posa - ' + self.ordini()[0].CompanyName,
                 'location': self.ordini()[0].Address + ", " + self.ordini()[0].City + ", " + self.ordini()[0].Country,
@@ -169,7 +169,6 @@ class Posa(TrackModifyDate):
                     'timeZone': 'Europe/Rome',
                 },
                 'attendees': [
-                    {'email': 'andrea.zonca@gmail.com'},
                 ],
                 'reminders': {
                     'useDefault': False,

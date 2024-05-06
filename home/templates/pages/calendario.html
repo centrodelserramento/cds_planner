@@ -1,0 +1,37 @@
+{% extends 'layouts/base.html' %}
+{% load static %}
+{% load bootstrap4 %}
+
+{% block extrastyle %}
+<link rel="stylesheet" type="text/css" href="/static/assets/css/bootstrap-datetimepicker.css">
+{% endblock extrastyle %}
+
+{% block breadcrumbs %}{% endblock breadcrumbs %}
+
+{% block content %}
+
+<!-- [ Main Content ] start -->
+<div class="row">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5>Calendario </h5>
+                </div>
+                <div class="card-block">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <iframe src="https://calendar.google.com/calendar/embed?height=600&wkst=2&ctz=Europe%2FRome&bgcolor=%23ffffff&showPrint=0&hl=it&mode=AGENDA&title=Calendari&src=Y18wOTE0MWJkZjk1M2M3YmY2YTUxNWFlYWQwNmVhNjY5ODIwMWNhNTI5NmUwNWRiMTIzMTk0ZDI2YzhmZjUyNjZkQGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&src=Y19hYTJkYmQ0ZDZhNDEyYTE4MWIzNTBjZjFiZGJlNDY2NDkwOGEwNzA0YzZiYzYwNmQ2OWI1MDhlNGY2MTcyOTU1QGdyb3VwLmNhbGVuZGFyLmdvb2dsZS5jb20&color=%23F09300&color=%23D50000" 
+                            style="border:solid 1px #777"
+                            width="1200" height="1000" frameborder="0" scrolling="no"></iframe>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_js %}
+{% endblock extra_js %}

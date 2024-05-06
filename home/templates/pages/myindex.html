@@ -77,6 +77,7 @@
                                         <li><b>{{ line.RgItem }}</b>: {{line.RgQty|floatformat:"0"}} {{line.RgUoM }}<br />{{line.RgDescription}} </li>
                                     {% endfor %}
                                     </ul>
+                            {% if ordine.pose %}
                             <p>Pose</p>
                             {% for posa in ordine.pose %}
                                 <p> <a href="/posa/{{posa.pk}}">
@@ -84,6 +85,7 @@
                                     <i class="fas fa-circle f-10 m-r-15" style="color:{{ posa.stato.colore}}"></i>
                                     {{ posa.data |default_if_none:"Data da decidere"   }} ({{ posa.stato | default_if_none:"" }})</a></p>
                             {% endfor %}
+                            {% endif %}
                                     </h6>
                                 </td>
                                 <td>

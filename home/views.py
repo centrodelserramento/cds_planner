@@ -40,10 +40,10 @@ def index(request):
     # if user is in group "Manager"
     if request.user.groups.filter(name="Managers").exists():
         context["ordini"] = {}
-        context["ordini"]["Da categorizzare"] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=None)
+        context["ordini"]["Da categorizzare"] = Order.objects.filter(OrderDate__gte='2023-11-01', RgLine=1, tipo=None)
         context["ordini"]["Da categorizzare"] = [ordine for ordine in context["ordini"]["Da categorizzare"] if ordine.ha_servizi()]
         for tipo in TipoPosa.objects.all():
-            context["ordini"][tipo.descrizione] = Order.objects.filter(OrderDate__gte='2024-01-01', RgLine=1, tipo=tipo)
+            context["ordini"][tipo.descrizione] = Order.objects.filter(OrderDate__gte='2023-11-01', RgLine=1, tipo=tipo)
     return render(request, "pages/myindex.html", context)
 
 
@@ -113,3 +113,10 @@ def cancella_posa(request, pk):
     posa.nel_cestino = True
     posa.save()
     return redirect("ordine", numero_ordine=posa.ordine_url())
+
+def calendario(request):
+    context = {
+        "calendari": Calendario.objects.all(),
+        "segment": "calendario",
+    }
+    return render(request, "pages/calendario.html", context)

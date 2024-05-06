@@ -21,6 +21,9 @@
                 <div class="card-block">
                     <div class="row">
                         <div class="col-md-12">
+                            {% if user.is_superuser %}
+                            <p><a href="/admin/home/order/{{ righe_ordine.0.pk }}/change/" class="btn btn-primary">Ordine nel database</a></p>
+                            {% endif %}
                             <p>Questi dati sono importati ed aggiornati automaticamente dal database del Centro Del Serramento, non sono modificabili dal planner.</p>
                             <p>Questa pagina e' solo visibile ai manager, non e' accessibile a posatori e clienti</p>
                             <p>Ragione sociale: <b>{{ righe_ordine.0.CompanyName }}</b></p>
