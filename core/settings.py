@@ -33,7 +33,7 @@ if not SECRET_KEY:
 DEBUG = "RENDER" not in os.environ
 
 # HOSTs List
-ALLOWED_HOSTS = ["localhost", "127.0.0.1"]
+ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cds.smplweb.com"]
 
 # Add here your deployment HOSTS
 CSRF_TRUSTED_ORIGINS = [
