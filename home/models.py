@@ -134,6 +134,7 @@ class Posa(TrackModifyDate):
     telefono1 = PhoneNumberField(null=False, blank=True, unique=False)
     telefono2 = PhoneNumberField(null=False, blank=True, unique=False)
     event_id = models.CharField(max_length=200, blank=True)
+    calendar_id = models.CharField(max_length=200, blank=True)
     nota_posatore = models.TextField(max_length=500, blank=True)
     nota_cliente = models.TextField(max_length=500, blank=True)
     utente_modificato_per_ultimo = models.ForeignKey(
@@ -149,8 +150,9 @@ class Posa(TrackModifyDate):
         return reverse("posa-update", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
-
-        if self.posatori.count() > 0 and self.data is not None and self.ora is not None and self.durata_ore is not None and self.durata_minuti is not None:
+        if self.nel_cestino:
+            self.delete_calendar_event()
+        elif self.posatori.count() > 0 and self.data is not None and self.ora is not None and self.durata_ore is not None and self.durata_minuti is not None:
             description = "<b><a href=\"" + self.get_absolute_url() + "\">Link al sistema di gestione pose</a></b><br><br>Ordine: " + \
                 str(self.ordine) + "<br>Cliente: " + self.ordini()[0].CompanyName + \
                 "<br>Posatori: " + ", ".join([posatore.username for posatore in self.posatori.all()]) + \
@@ -182,11 +184,23 @@ class Posa(TrackModifyDate):
                 },
                 }
             if self.event_id == "":
-                calendar_event = calendar_service.events().insert(calendarId=self.posatori.all()[0].calendario.id, body=event).execute()
+                calendar_event = calendar_service.events().insert(calendarId=self.posatori.first().calendario.id, body=event).execute()
                 self.event_id = calendar_event['id']
+                self.calendar_id = self.posatori.first().calendario.id
             else:
-                calendar_event = calendar_service.events().update(calendarId=self.posatori.all()[0].calendario.id, eventId=self.event_id, body=event).execute()
+                new_calendar_id = self.posatori.first().calendario.id
+                if new_calendar_id == self.calendar_id:
+                    calendar_event = calendar_service.events().update(calendarId=self.calendar_id, eventId=self.event_id, body=event).execute()
+                else:
+                    self.delete_calendar_event()
+                    calendar_event = calendar_service.events().insert(calendarId=new_calendar_id, body=event).execute()
+                    self.event_id = calendar_event['id']
+                    self.calendar_id = new_calendar_id
         super().save(*args, **kwargs)
+
+    def delete_calendar_event(self):
+        if len(self.calendar_id) > 0 and len(self.event_id) > 0:
+            calendar_service.events().delete(calendarId=self.calendar_id, eventId=self.event_id).execute()
     
 
 class StatoPosa(models.Model):
