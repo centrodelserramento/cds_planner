@@ -33,8 +33,14 @@
                                 </td>
                                 <td>
                                 <h6 class="text-muted">
-                                    <i class="fas fa-circle text-c-green f-10 m-r-15"></i>
-                                        {{posa.data}} {{posa.ora}} 
+                                    <i class="fas fa-circle f-10 m-r-15" style="color:{{posa.stato.colore}}"></i>
+                                        {{posa.stato}}
+                                    </h6>
+                                </td>
+                                <td>
+                                <h6 class="text-muted">
+                                    <i class="f-10 m-r-15"></i>
+                                        {{posa.data}} {{posa.ora}} ({{posa.durata_ore}}h{% if posa.durata_minuti != 0 %}{{posa.durata_minuti}}{% endif %})
                                     </h6>
                                 </td>
                                 <td><a href="/posa/{{posa.pk}}" class="label theme-bg text-white f-12">Visualizza</a>
