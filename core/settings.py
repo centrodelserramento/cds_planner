@@ -15,6 +15,7 @@ from pathlib import Path
 from dotenv import load_dotenv
 
 import django_dyn_dt
+import socket
 
 load_dotenv()  # take environment variables from .env.
 
@@ -34,6 +35,10 @@ DEBUG = "RENDER" not in os.environ
 
 # HOSTs List
 ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cds.smplweb.com"]
+
+hostname = socket.gethostname()
+
+SH = hostname == "sh"
 
 # Add here your deployment HOSTS
 CSRF_TRUSTED_ORIGINS = [
@@ -69,11 +74,12 @@ INSTALLED_APPS = [
     "phonenumber_field",
     "bootstrap4",
     "colorfield",
-    "debug_toolbar",
 ]
 
+if not SH:
+    INSTALLED_APPS.append("debug_toolbar")
+
 MIDDLEWARE = [
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -83,6 +89,9 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if not SH:
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "core.urls"
 
