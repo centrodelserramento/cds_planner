@@ -21,11 +21,13 @@
             <span class="pcoded-micon"><i class="feather icon-home"></i></span><span class="pcoded-mtext">Homepage</span>
           </a>
         </li>
+        {% if request.user.is_authenticated %}
         <li data-username="dashboard Default Ecommerce CRM Analytics Crypto Project" class="nav-item {% if 'calendario' in segment %}active{% endif %}">
           <a href="{% url 'calendario' %}" class="nav-link ">
             <span class="pcoded-micon"><i class="feather icon-calendar"></i></span><span class="pcoded-mtext">Calendario</span>
           </a>
         </li>
+        {% endif %}
 
         <li
           data-username="Authentication Sign up Sign in reset password Change password Personal information profile settings map form subscribe"
