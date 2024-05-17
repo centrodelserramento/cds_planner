@@ -10,7 +10,6 @@
 
 {% block content %}
 
-{% with ordine=righe_ordine.0 %}
 <!-- [ Main Content ] start -->
 <div class="row">
     <div class="row">
@@ -36,17 +35,23 @@
                                 {% for line in ordine.lista_servizi %}
                                     <li>{{ line }}</li>
                                 {% endfor %}
-                                </ul>
+                            </ul>
+                            <form method="post">
+                                {% csrf_token %}
+                                {{ form.non_field_errors }}
+                                {% bootstrap_form form %}
+                                {% buttons %}
+                                <button type="submit" class="btn btn-primary">Salva</button>
+                                {% endbuttons %}
+                            </form>
                             <h3>Materiali</h3>
                             <ul>
-                            {% for riga in righe_ordine %}
-                            {% if riga.RgLineType == "3538947" %}
+                            {% for riga in ordine.lista_materiali %}
                             <li>{{ riga.RgDescription }} - <b>{{ riga.RgItem }}</b>: {{ riga.RgQty }} {{ riga.RgUoM }}</p>
-                                {% endif %}
                             {% endfor %}
                             </ul>
                             <h3>Descrizione completa ordine</h3>
-                            {% for riga in righe_ordine %}
+                            {% for riga in ordine.righe_ordine %}
                             <p>{{ riga.RgDescription }}</p>
                             {% endfor %}
                             <h3>Pose</h3>
@@ -66,7 +71,6 @@
         </div>
     </div>
 </div>
-{% endwith %}
 {% endblock content %}
 
 {% block extra_js %}

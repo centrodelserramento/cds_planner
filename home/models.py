@@ -88,6 +88,9 @@ class Order(TrackModifyDate):
     RgNotes = models.TextField(blank=True, null=True)  # This field type is a guess.
     RgCancelled = models.TextField(blank=True, null=True)  # This field type is a guess.
 
+    def righe_ordine(self):
+        return Order.objects.filter(InternalOrdNo=self.InternalOrdNo).order_by("RgLine")
+
     # Only in the planner
     tipo = models.ForeignKey("TipoPosa", null=True, blank=True, on_delete=models.PROTECT)
 

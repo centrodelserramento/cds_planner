@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import get_object_or_404, render, redirect
 import datetime
 from datetime import date
 from admin_datta.forms import (
@@ -120,3 +120,25 @@ def calendario(request):
         "segment": "calendario",
     }
     return render(request, "pages/calendario.html", context)
+
+class OrdineForm(forms.ModelForm):
+
+    class Meta:
+        model = Order
+        fields = [
+            "tipo",
+        ]
+
+class OrdineUpdateView(SuccessMessageMixin, UpdateView):
+    model = Order
+    form_class = OrdineForm
+    template_name = "pages/ordine.html"
+    context_object_name = "ordine"
+    success_message = "L'ordine e' stato aggiornato con successo"
+
+    def get_object(self):
+        numero_ordine = self.kwargs["numero_ordine"].replace("-","/")
+        return get_object_or_404(Order, InternalOrdNo=numero_ordine, RgLine=1)
+
+    def get_success_url(self):
+        return reverse("index")
