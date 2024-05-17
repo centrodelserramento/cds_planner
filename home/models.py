@@ -150,16 +150,22 @@ class Posa(TrackModifyDate):
         return reverse("posa-update", kwargs={"pk": self.pk})
 
     def save(self, *args, **kwargs):
+<<<<<<< HEAD
         if self.nel_cestino:
             self.delete_calendar_event()
         elif self.posatori.count() > 0 and self.data is not None and self.ora is not None and self.durata_ore is not None and self.durata_minuti is not None:
             description = "<b><a href=\"" + self.get_absolute_url() + "\">Link al sistema di gestione pose</a></b><br><br>Ordine: " + \
+=======
+
+        if self.posatori.count() > 0 and self.data is not None and self.ora is not None and self.durata_ore is not None and self.durata_minuti is not None:
+            description = "<b><a href=\"https://cds.smplweb.com/" + self.get_absolute_url() + "\">Link al sistema di gestione pose</a></b><br><br>Ordine: " + \
+>>>>>>> fix path to server
                 str(self.ordine) + "<br>Cliente: " + self.ordini()[0].CompanyName + \
                 "<br>Posatori: " + ", ".join([posatore.username for posatore in self.posatori.all()]) + \
                 "<br>Telefono1: " + str(self.telefono1)
             if self.telefono2:
                 description += "<br>Telefono2: " + str(self.telefono2)
-            description += "<br><br>" + self.descrizione 
+            description += "<br><br>" + self.descrizione
             attendees = [{'email': 'clientxxxxxxx@gmail.com'},]
             event = {
                 'summary': 'Appuntamento di posa - ' + self.ordini()[0].CompanyName,
@@ -201,7 +207,6 @@ class Posa(TrackModifyDate):
     def delete_calendar_event(self):
         if len(self.calendar_id) > 0 and len(self.event_id) > 0:
             calendar_service.events().delete(calendarId=self.calendar_id, eventId=self.event_id).execute()
-    
 
 class StatoPosa(models.Model):
     descrizione = models.CharField(max_length=20, null=False)
