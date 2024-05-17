@@ -10,26 +10,33 @@
 
 {% block content %}
 
+{% with ordine=righe_ordine.0 %}
 <!-- [ Main Content ] start -->
 <div class="row">
     <div class="row">
         <div class="col-md-12">
             <div class="card">
                 <div class="card-header">
-                    <h5>Ordine {{righe_ordine.0.InternalOrdNo }} </h5>
+                    <h5>Ordine {{ordine.InternalOrdNo }} </h5>
                 </div>
                 <div class="card-block">
                     <div class="row">
                         <div class="col-md-12">
                             {% if user.is_superuser %}
-                            <p><a href="/admin/home/order/{{ righe_ordine.0.pk }}/change/" class="btn btn-primary">Ordine nel database</a></p>
+                            <p><a href="/admin/home/order/{{ ordine.pk }}/change/" class="btn btn-primary">Ordine nel database</a></p>
                             {% endif %}
                             <p>Questi dati sono importati ed aggiornati automaticamente dal database del Centro Del Serramento, non sono modificabili dal planner.</p>
                             <p>Questa pagina e' solo visibile ai manager, non e' accessibile a posatori e clienti</p>
-                            <p>Ragione sociale: <b>{{ righe_ordine.0.CompanyName }}</b></p>
+                            <p>Ragione sociale: <b>{{ ordine.CompanyName }}</b></p>
                             <p>Indirizzo cantiere: Dovrebbe essere in Mago ma attualmente manca</p>
-                             <p>Indirizzo: {{ righe_ordine.0.Address }} {{ righe_ordine.0.ZIPCode }} {{ righe_ordine.0.City }}
-                                {{righe_ordine.0.County }}</p>
+                             <p>Indirizzo: {{ ordine.Address }} {{ ordine.ZIPCode }} {{ ordine.City }}
+                                {{ordine.County }}</p>
+                            <h3>Servizi</h3>
+                            <ul>
+                                {% for line in ordine.lista_servizi %}
+                                    <li>{{ line }}</li>
+                                {% endfor %}
+                                </ul>
                             <h3>Materiali</h3>
                             <ul>
                             {% for riga in righe_ordine %}
@@ -49,7 +56,7 @@
                                     <i class="fas fa-circle f-10 m-r-15" style="color:{{ posa.stato.colore}}"></i>
                                     {{ posa.data |default_if_none:"Data da decidere"   }} ({{ posa.stato | default_if_none:"" }})</a></p>
                             {% endfor %}
-                            <a href="/crea-posa/{{righe_ordine.0.ordine_url}}">
+                            <a href="/crea-posa/{{ordine.ordine_url}}">
                                 <button type="button" class="btn btn-primary">Crea nuova posa</button>
                             </a>
                         </div>
@@ -59,6 +66,7 @@
         </div>
     </div>
 </div>
+{% endwith %}
 {% endblock content %}
 
 {% block extra_js %}
