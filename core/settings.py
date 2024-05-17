@@ -38,7 +38,7 @@ ALLOWED_HOSTS = ["localhost", "127.0.0.1", "cds.smplweb.com"]
 
 hostname = socket.gethostname()
 
-SH = hostname == "sh"
+SH = hostname == "sh.smplweb.com"
 
 # Add here your deployment HOSTS
 CSRF_TRUSTED_ORIGINS = [
