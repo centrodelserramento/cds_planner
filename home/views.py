@@ -91,18 +91,6 @@ class PosaUpdateView(SuccessMessageMixin, UpdateView):
         form.instance.utente_modificato_per_ultimo = self.request.user
         return super().form_valid(form)
 
-def ordine(request, numero_ordine):
-    # get orders which have saleordid = numero_ordine
-    # sort by RgLine
-
-    numero_ordine = numero_ordine.replace("-","/")
-    righe_ordine = Order.objects.filter(InternalOrdNo=numero_ordine).order_by('RgLine')
-    context = {
-        "righe_ordine": righe_ordine,
-        "pose": righe_ordine[0].pose(),
-    }
-    return render(request, "pages/ordine.html", context)
-
 def crea_posa(request, numero_ordine):
     numero_ordine = numero_ordine.replace("-","/")
     posa = Posa.objects.create(ordine=numero_ordine)
